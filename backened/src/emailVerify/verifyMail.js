@@ -1,27 +1,14 @@
 
-import nodemailer from "nodemailer";
-import dotenv from "dotenv/config";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-
-    auth: {
-        user: process.env.mailUser,
-        pass: process.env.mailPass,
-    },
-
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const verifyMail = async (token, email) => {
-    const verificationLink = `https://my-store-nine-sand-65.vercel.app/user/verify/${token}`;
+    const verificationLink =
+        `https://my-store-nine-sand-65.vercel.app/user/verify/${token}`;
 
-    const mailOptions = {
-        from: process.env.mailUser,
+    const { data, error } = await resend.emails.send({
+        from: "MyStore <onboarding@resend.dev>",
         to: email,
         subject: "Verify Your Email",
 
@@ -36,11 +23,14 @@ export const verifyMail = async (token, email) => {
 
             <p>This verification link expires in 5 minutes.</p>
         `,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+        console.error("Resend email error:", error);
+        throw new Error(error.message);
+    }
 
-    console.log("Verification email sent:", info.messageId);
+    console.log("Verification email sent:", data.id);
 
-    return info;
+    return data;
 };
