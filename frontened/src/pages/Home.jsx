@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 import ProductCard from "../components/ProductCard";
-
-const API = "http://localhost:8004";
+import API_URL from "../config/api.js";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -14,8 +13,6 @@ const Home = () => {
   const [productLoading, setProductLoading] = useState(true);
   const [categoryLoading, setCategoryLoading] = useState(true);
 
-
-
   const getImageUrl = (image) => {
     if (!image) return "";
 
@@ -23,28 +20,24 @@ const Home = () => {
       return image;
     }
 
-    return `${API}${image}`;
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
   };
-
-
 
   const getProducts = async () => {
     try {
       setProductLoading(true);
 
       const response = await axios.get(
-        `${API}/product?limit=50`
+        `${API_URL}/product?limit=50`
       );
 
       const productList = response.data.products || [];
-
 
       const sortedProducts = [...productList].sort(
         (a, b) =>
           new Date(b.createdAt || 0) -
           new Date(a.createdAt || 0)
       );
-
 
       const formattedProducts = sortedProducts.map((product) => ({
         ...product,
@@ -56,20 +49,21 @@ const Home = () => {
       setProducts(formattedProducts.slice(0, 4));
 
     } catch (error) {
-      console.error("Products loading error:", error);
+      console.error(
+        "Products loading error:",
+        error.response?.data || error.message
+      );
     } finally {
       setProductLoading(false);
     }
   };
-
-
 
   const getCategories = async () => {
     try {
       setCategoryLoading(true);
 
       const response = await axios.get(
-        `${API}/category`
+        `${API_URL}/category`
       );
 
       const categoryList = response.data.categories || [];
@@ -77,13 +71,14 @@ const Home = () => {
       setCategories(categoryList);
 
     } catch (error) {
-      console.error("Categories loading error:", error);
+      console.error(
+        "Categories loading error:",
+        error.response?.data || error.message
+      );
     } finally {
       setCategoryLoading(false);
     }
   };
-
-
 
   useEffect(() => {
     getProducts();
@@ -92,8 +87,6 @@ const Home = () => {
 
   return (
     <div className="bg-white text-gray-800">
-
-
 
       <section className="grid grid-cols-1 md:grid-cols-2 bg-gray-100">
 
@@ -131,8 +124,6 @@ const Home = () => {
         />
 
       </section>
-
-
 
       {!categoryLoading && categories.length > 0 && (
 
@@ -190,8 +181,6 @@ const Home = () => {
 
       )}
 
-
-
       {!productLoading && products.length > 0 && (
 
         <section className="p-5 md:p-10 bg-gray-50">
@@ -236,8 +225,6 @@ const Home = () => {
 
       )}
 
-
-
       <section className="bg-gray-100 p-8 md:p-12">
 
         <h2 className="text-3xl font-bold text-center mb-10">
@@ -279,8 +266,6 @@ const Home = () => {
         </div>
 
       </section>
-
-
 
       <section className="bg-white p-8 md:p-12">
 
@@ -353,16 +338,11 @@ const Home = () => {
 
       </section>
 
-
-
       <footer className="bg-gray-900 text-white p-8 md:p-12">
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
 
-
-
           <div>
-
             <h2 className="text-2xl font-bold">
               MyStore
             </h2>
@@ -370,13 +350,9 @@ const Home = () => {
             <p className="text-gray-400 mt-3">
               Your destination for everyday shopping.
             </p>
-
           </div>
 
-
-
           <div>
-
             <h3 className="font-bold mb-3">
               COMPANY
             </h3>
@@ -396,13 +372,9 @@ const Home = () => {
             <Link to="/contact" className="block text-gray-400 hover:text-white">
               Contact Us
             </Link>
-
           </div>
 
-
-
           <div>
-
             <h3 className="font-bold mb-3">
               POLICIES
             </h3>
@@ -427,13 +399,9 @@ const Home = () => {
             >
               Shipping Policy
             </Link>
-
           </div>
 
-
-
           <div>
-
             <h3 className="font-bold mb-3">
               CUSTOMER SUPPORT
             </h3>
@@ -445,7 +413,6 @@ const Home = () => {
             <p className="text-gray-400">
               Phone: +91 9330149337
             </p>
-
           </div>
 
         </div>

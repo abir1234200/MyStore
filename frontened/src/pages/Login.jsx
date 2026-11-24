@@ -4,6 +4,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+import API_URL from "../config/api.js";
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const Login = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8004/user/login",
+        `${API_URL}/user/login`,
         formData
       );
 
@@ -49,7 +51,6 @@ const Login = () => {
           email: "",
           password: ""
         });
-
 
         navigate("/");
 

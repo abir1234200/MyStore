@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import API_URL from "../config/api.js";
+
 const MyOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ const MyOrders = () => {
                 const token = localStorage.getItem("accessToken");
 
                 const response = await axios.get(
-                    "http://localhost:8004/order/my-orders",
+                    `${API_URL}/order/my-orders`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

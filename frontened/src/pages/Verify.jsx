@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
+import API_URL from "../config/api.js";
+
 const Verify = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const Verify = () => {
     const verifyEmail = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8004/user/verify",
+          `${API_URL}/user/verify`,
           {
             headers: {
               Authorization: `Bearer ${token}`

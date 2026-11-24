@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import { addToCart } from "../features/cart/cartSlice";
 import { addToWishlist } from "../features/wishlist/wishlistSlice";
 
+import API_URL from "../config/api.js";
+
 const ProductDetails = () => {
   const { id } = useParams();
 
@@ -22,13 +24,22 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+  };
 
   const getProduct = async () => {
     try {
       setLoading(true);
 
       const response = await axios.get(
-        `http://localhost:8004/product/${id}`
+        `${API_URL}/product/${id}`
       );
 
       if (response.data.success) {
@@ -54,7 +65,6 @@ const ProductDetails = () => {
     getProduct();
   }, [id]);
 
-
   const handleAddToCart = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -66,7 +76,7 @@ const ProductDetails = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8004/cart/add",
+        `${API_URL}/cart/add`,
         {
           productId: product._id,
           quantity: 1
@@ -83,9 +93,7 @@ const ProductDetails = () => {
           id: product._id,
           title: product.name,
           price: product.price,
-          image: product.images?.[0]
-            ? `http://localhost:8004${product.images[0]}`
-            : "",
+          image: getImageUrl(product.images?.[0]),
           quantity: 1
         }));
 
@@ -100,7 +108,6 @@ const ProductDetails = () => {
     }
   };
 
-
   const handleAddToWishlist = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -112,7 +119,7 @@ const ProductDetails = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8004/wishlist/add",
+        `${API_URL}/wishlist/add`,
         {
           productId: product._id
         },
@@ -128,9 +135,7 @@ const ProductDetails = () => {
           id: product._id,
           title: product.name,
           price: product.price,
-          image: product.images?.[0]
-            ? `http://localhost:8004${product.images[0]}`
-            : "",
+          image: getImageUrl(product.images?.[0]),
           rating: product.rating || 0
         }));
 
@@ -144,7 +149,6 @@ const ProductDetails = () => {
       );
     }
   };
-
 
   const handleBuyNow = () => {
     const token = localStorage.getItem("accessToken");
@@ -166,9 +170,7 @@ const ProductDetails = () => {
           productId: product._id,
           title: product.name,
           price: product.price,
-          image: product.images?.[0]
-            ? `http://localhost:8004${product.images[0]}`
-            : "",
+          image: getImageUrl(product.images?.[0]),
           quantity: 1
         }
       }
@@ -198,19 +200,16 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-
           <div>
             <img
               src={
-                product.images?.[0]
-                  ? `http://localhost:8004${product.images[0]}`
-                  : "https://placehold.co/600x400?text=No+Image"
+                getImageUrl(product.images?.[0]) ||
+                "https://placehold.co/600x400?text=No+Image"
               }
               alt={product.name}
               className="w-full max-h-[450px] object-contain rounded-lg"
             />
           </div>
-
 
           <div>
 
@@ -235,7 +234,6 @@ const ProductDetails = () => {
 
             <div className="flex flex-wrap gap-3 mt-8">
 
-
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock <= 0}
@@ -245,7 +243,6 @@ const ProductDetails = () => {
                 Add to Cart
               </button>
 
-
               <button
                 onClick={handleBuyNow}
                 disabled={product.stock <= 0}
@@ -254,7 +251,6 @@ const ProductDetails = () => {
                 <FaBolt />
                 Buy Now
               </button>
-
 
               <button
                 onClick={handleAddToWishlist}

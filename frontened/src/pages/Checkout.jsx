@@ -5,6 +5,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import API_URL from "../config/api.js";
+
 const Checkout = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -30,7 +32,6 @@ const Checkout = () => {
         0
     );
 
-
     const loadRazorpay = () => {
         return new Promise((resolve) => {
             const existingScript = document.querySelector(
@@ -54,7 +55,6 @@ const Checkout = () => {
         });
     };
 
-
     const handleCOD = async () => {
         const orderData = buyNowItem
             ? {
@@ -69,7 +69,7 @@ const Checkout = () => {
             };
 
         const response = await axios.post(
-            "http://localhost:8004/order/place",
+            `${API_URL}/order/place`,
             orderData,
             {
                 headers: {
@@ -84,7 +84,6 @@ const Checkout = () => {
         }
     };
 
-
     const handleOnlinePayment = async () => {
 
         const scriptLoaded = await loadRazorpay();
@@ -94,7 +93,6 @@ const Checkout = () => {
                 "Unable to load Razorpay. Check your internet connection."
             );
         }
-
 
         const paymentData = buyNowItem
             ? {
@@ -106,9 +104,8 @@ const Checkout = () => {
                 shippingAddress
             };
 
-
         const response = await axios.post(
-            "http://localhost:8004/payment/create-order",
+            `${API_URL}/payment/create-order`,
             paymentData,
             {
                 headers: {
@@ -136,7 +133,7 @@ const Checkout = () => {
             handler: async (paymentResponse) => {
                 try {
                     const verifyResponse = await axios.post(
-                        "http://localhost:8004/payment/verify-payment",
+                        `${API_URL}/payment/verify-payment`,
                         paymentResponse,
                         {
                             headers: {
@@ -190,7 +187,6 @@ const Checkout = () => {
 
         razorpay.open();
     };
-
 
     const handlePlaceOrder = async () => {
 
@@ -247,7 +243,6 @@ const Checkout = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-
                 <div className="border rounded-lg p-6">
 
                     <h2 className="text-xl font-bold mb-4">
@@ -270,7 +265,6 @@ const Checkout = () => {
 
                     <div className="space-y-4">
 
-
                         <label className="flex items-center gap-3 border p-4 rounded-lg cursor-pointer">
 
                             <input
@@ -286,7 +280,6 @@ const Checkout = () => {
                             <span>Cash on Delivery</span>
 
                         </label>
-
 
                         <label className="flex items-center gap-3 border p-4 rounded-lg cursor-pointer">
 
@@ -319,7 +312,6 @@ const Checkout = () => {
                     </button>
 
                 </div>
-
 
                 <div className="border rounded-lg p-6 h-fit">
 

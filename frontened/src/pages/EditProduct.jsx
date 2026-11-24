@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import API_URL from "../config/api.js";
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -20,13 +21,19 @@ const EditProduct = () => {
     category: ""
   });
 
-
   const [existingImage, setExistingImage] = useState("");
-
   const [imageFile, setImageFile] = useState(null);
-
-
   const [previewImage, setPreviewImage] = useState("");
+
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+  };
 
   const getProductDetails = async () => {
     try {
@@ -39,8 +46,8 @@ const EditProduct = () => {
       }
 
       const [productResponse, categoryResponse] = await Promise.all([
-        axios.get(`http://localhost:8004/product/${id}`),
-        axios.get("http://localhost:8004/category")
+        axios.get(`${API_URL}/product/${id}`),
+        axios.get(`${API_URL}/category`)
       ]);
 
       const product = productResponse.data.product;
@@ -54,7 +61,7 @@ const EditProduct = () => {
       });
 
       const image = product.images?.[0]
-        ? `http://localhost:8004${product.images[0]}`
+        ? getImageUrl(product.images[0])
         : "";
 
       setExistingImage(image);
@@ -75,7 +82,6 @@ const EditProduct = () => {
     getProductDetails();
   }, [id]);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -84,7 +90,6 @@ const EditProduct = () => {
       [name]: value
     }));
   };
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -103,7 +108,6 @@ const EditProduct = () => {
     setPreviewImage(imageURL);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,6 +115,12 @@ const EditProduct = () => {
       setUpdating(true);
 
       const accessToken = localStorage.getItem("accessToken");
+
+      if (!accessToken) {
+        toast.error("Please login first");
+        navigate("/login");
+        return;
+      }
 
       const data = new FormData();
 
@@ -120,13 +130,12 @@ const EditProduct = () => {
       data.append("stock", formData.stock);
       data.append("category", formData.category);
 
-
       if (imageFile) {
         data.append("images", imageFile);
       }
 
       const response = await axios.put(
-        `http://localhost:8004/product/${id}`,
+        `${API_URL}/product/${id}`,
         data,
         {
           headers: {
@@ -175,7 +184,6 @@ const EditProduct = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-
           <div>
             <label className="block font-semibold mb-2">
               Product Name
@@ -191,7 +199,6 @@ const EditProduct = () => {
             />
           </div>
 
-
           <div>
             <label className="block font-semibold mb-2">
               Product Description
@@ -206,7 +213,6 @@ const EditProduct = () => {
               className="w-full border rounded-xl p-4"
             />
           </div>
-
 
           <div>
             <label className="block font-semibold mb-2">
@@ -224,7 +230,6 @@ const EditProduct = () => {
             />
           </div>
 
-
           <div>
             <label className="block font-semibold mb-2">
               Stock Quantity
@@ -240,7 +245,6 @@ const EditProduct = () => {
               className="w-full border rounded-xl p-4"
             />
           </div>
-
 
           <div>
             <label className="block font-semibold mb-2">
@@ -266,7 +270,6 @@ const EditProduct = () => {
               ))}
             </select>
           </div>
-
 
           <div>
             <label className="block font-semibold mb-3">
@@ -296,7 +299,6 @@ const EditProduct = () => {
               Select a new image to replace the existing one.
             </p>
           </div>
-
 
           <button
             type="submit"

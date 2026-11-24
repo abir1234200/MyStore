@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API = "http://localhost:8004/user";
+import API_URL from "../config/api.js";
 
 const MyAccount = () => {
     const [activeTab, setActiveTab] = useState("profile");
@@ -27,17 +27,15 @@ const MyAccount = () => {
         isDefault: false
     });
 
-
-
     const token = localStorage.getItem("accessToken");
+
+    const API = `${API_URL}/user`;
 
     const config = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
-
-
 
     const getProfile = async () => {
         try {
@@ -60,8 +58,6 @@ const MyAccount = () => {
         }
     };
 
-
-
     const getAddresses = async () => {
         try {
             setLoading(true);
@@ -83,14 +79,10 @@ const MyAccount = () => {
         }
     };
 
-
-
     useEffect(() => {
         getProfile();
         getAddresses();
     }, []);
-
-
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -100,8 +92,6 @@ const MyAccount = () => {
             [name]: type === "checkbox" ? checked : value
         }));
     };
-
-
 
     const resetForm = () => {
         setForm({
@@ -116,8 +106,6 @@ const MyAccount = () => {
 
         setEditingId(null);
     };
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -168,8 +156,6 @@ const MyAccount = () => {
         setActiveTab("addresses");
     };
 
-
-
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this address?")) {
             return;
@@ -193,8 +179,6 @@ const MyAccount = () => {
         }
     };
 
-
-
     const handleDefault = async (id) => {
         try {
             await axios.patch(
@@ -215,8 +199,6 @@ const MyAccount = () => {
         }
     };
 
-
-
     return (
         <div className="min-h-screen bg-gray-100 px-4 py-10">
 
@@ -232,15 +214,13 @@ const MyAccount = () => {
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
 
-
-
                     <div className="h-fit rounded-lg bg-white p-4 shadow">
 
                         <button
                             onClick={() => setActiveTab("profile")}
                             className={`mb-2 w-full rounded-lg p-3 text-left ${activeTab === "profile"
-                                    ? "bg-blue-600 text-white"
-                                    : "hover:bg-gray-100"
+                                ? "bg-blue-600 text-white"
+                                : "hover:bg-gray-100"
                                 }`}
                         >
                             My Profile
@@ -249,8 +229,8 @@ const MyAccount = () => {
                         <button
                             onClick={() => setActiveTab("addresses")}
                             className={`mb-2 w-full rounded-lg p-3 text-left ${activeTab === "addresses"
-                                    ? "bg-blue-600 text-white"
-                                    : "hover:bg-gray-100"
+                                ? "bg-blue-600 text-white"
+                                : "hover:bg-gray-100"
                                 }`}
                         >
                             My Addresses
@@ -258,11 +238,7 @@ const MyAccount = () => {
 
                     </div>
 
-
-
                     <div className="rounded-lg bg-white p-6 shadow md:col-span-3">
-
-
 
                         {activeTab === "profile" && (
 
@@ -339,8 +315,6 @@ const MyAccount = () => {
 
                         )}
 
-
-
                         {activeTab === "addresses" && (
 
                             <div>
@@ -348,7 +322,6 @@ const MyAccount = () => {
                                 <h2 className="mb-6 text-xl font-bold">
                                     My Addresses
                                 </h2>
-
 
                                 <form
                                     onSubmit={handleSubmit}
@@ -445,8 +418,6 @@ const MyAccount = () => {
                                     </div>
 
                                 </form>
-
-
 
                                 <h3 className="mb-4 text-lg font-semibold">
                                     Saved Addresses

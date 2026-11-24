@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import API_URL from "../config/api.js";
 
 const MyProducts = () => {
   const navigate = useNavigate();
@@ -10,6 +11,17 @@ const MyProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "https://placehold.co/600x400?text=No+Image";
+    }
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+  };
 
   const getMyProducts = async () => {
     try {
@@ -22,7 +34,7 @@ const MyProducts = () => {
       }
 
       const response = await axios.get(
-        "http://localhost:8004/product/my-products",
+        `${API_URL}/product/my-products`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`
@@ -45,7 +57,6 @@ const MyProducts = () => {
     getMyProducts();
   }, []);
 
-
   const deleteProduct = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product?"
@@ -57,7 +68,7 @@ const MyProducts = () => {
       const accessToken = localStorage.getItem("accessToken");
 
       const response = await axios.delete(
-        `http://localhost:8004/product/${id}`,
+        `${API_URL}/product/${id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`
@@ -86,7 +97,6 @@ const MyProducts = () => {
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
 
-
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
 
           <div>
@@ -108,7 +118,6 @@ const MyProducts = () => {
 
         </div>
 
-
         {loading ? (
 
           <p className="text-lg text-center py-10">
@@ -116,7 +125,6 @@ const MyProducts = () => {
           </p>
 
         ) : products.length === 0 ? (
-
 
           <div className="bg-white rounded-xl shadow p-10 text-center">
 
@@ -141,7 +149,6 @@ const MyProducts = () => {
 
         ) : (
 
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {products.map((product) => (
@@ -151,14 +158,9 @@ const MyProducts = () => {
                 className="bg-white rounded-xl shadow-md overflow-hidden"
               >
 
-
                 <Link to={`/seller/edit-product/${product._id}`}>
                   <img
-                    src={
-                      product.images?.[0]
-                        ? `http://localhost:8004${product.images[0]}`
-                        : "https://placehold.co/600x400?text=No+Image"
-                    }
+                    src={getImageUrl(product.images?.[0])}
                     alt={product.name}
                     className="w-full h-52 object-cover cursor-pointer hover:opacity-90 transition"
                   />
@@ -178,7 +180,6 @@ const MyProducts = () => {
                     Stock: {product.stock}
                   </p>
 
-
                   <button
                     onClick={() =>
                       navigate(`/seller/edit-product/${product._id}`)
@@ -187,7 +188,6 @@ const MyProducts = () => {
                   >
                     Edit Product
                   </button>
-
 
                   <button
                     onClick={() => deleteProduct(product._id)}

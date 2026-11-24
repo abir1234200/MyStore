@@ -14,6 +14,8 @@ import { addToCart } from "../features/cart/cartSlice";
 import { FaShoppingCart, FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
+import API_URL from "../config/api.js";
+
 const Wishlist = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,6 +24,15 @@ const Wishlist = () => {
     (state) => state.wishlist.wishlistItems
   );
 
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+  };
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -34,7 +45,7 @@ const Wishlist = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:8004/wishlist",
+          `${API_URL}/wishlist`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,7 +59,7 @@ const Wishlist = () => {
               id: product._id,
               title: product.name,
               price: product.price,
-              image: product.images?.[0] || "",
+              image: getImageUrl(product.images?.[0]),
               rating: product.rating || 0,
             })
           );
@@ -66,13 +77,12 @@ const Wishlist = () => {
     fetchWishlist();
   }, [dispatch, navigate]);
 
-
   const handleRemove = async (id) => {
     try {
       const token = localStorage.getItem("accessToken");
 
       const response = await axios.delete(
-        `http://localhost:8004/wishlist/${id}`,
+        `${API_URL}/wishlist/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +102,6 @@ const Wishlist = () => {
     }
   };
 
-
   const handleAddToCart = async (product) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -104,7 +113,7 @@ const Wishlist = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8004/cart/add",
+        `${API_URL}/cart/add`,
         {
           productId: product.id,
           quantity: 1,
@@ -149,11 +158,7 @@ const Wishlist = () => {
             >
 
               <img
-                src={
-                  item.image.startsWith("http")
-                    ? item.image
-                    : `http://localhost:8004${item.image}`
-                }
+                src={getImageUrl(item.image)}
                 alt={item.title}
                 className="w-full h-48 object-cover rounded"
               />

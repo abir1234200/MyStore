@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import API_URL from "../config/api.js";
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -25,11 +26,10 @@ const AddProduct = () => {
     category: ""
   });
 
-
   const getAllCategories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8004/category"
+        `${API_URL}/category`
       );
 
       setCategories(response.data.categories || []);
@@ -44,7 +44,6 @@ const AddProduct = () => {
     getAllCategories();
   }, []);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -53,7 +52,6 @@ const AddProduct = () => {
       [name]: value
     }));
   };
-
 
   const handleImageChange = (e) => {
     const selectedImages = Array.from(e.target.files);
@@ -95,14 +93,12 @@ const AddProduct = () => {
     e.target.value = "";
   };
 
-
   const removeImage = (index) => {
     URL.revokeObjectURL(previews[index]);
 
     setImages((prev) => prev.filter((_, i) => i !== index));
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
-
 
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) {
@@ -121,7 +117,7 @@ const AddProduct = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8004/category",
+        `${API_URL}/category`,
         {
           name: newCategoryName.trim()
         },
@@ -160,7 +156,6 @@ const AddProduct = () => {
     }
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -192,7 +187,7 @@ const AddProduct = () => {
       });
 
       const response = await axios.post(
-        "http://localhost:8004/product",
+        `${API_URL}/product`,
         productData,
         {
           headers: {
@@ -247,7 +242,6 @@ const AddProduct = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-
           <div>
             <label className="block font-semibold mb-2">
               Product Name
@@ -264,7 +258,6 @@ const AddProduct = () => {
             />
           </div>
 
-
           <div>
             <label className="block font-semibold mb-2">
               Product Description
@@ -280,7 +273,6 @@ const AddProduct = () => {
               className="w-full border rounded-xl p-4"
             />
           </div>
-
 
           <div>
             <label className="block font-semibold mb-2">
@@ -299,7 +291,6 @@ const AddProduct = () => {
             />
           </div>
 
-
           <div>
             <label className="block font-semibold mb-2">
               Stock Quantity
@@ -316,7 +307,6 @@ const AddProduct = () => {
               className="w-full border rounded-xl p-4"
             />
           </div>
-
 
           <div>
             <label className="block font-semibold mb-2">
@@ -342,7 +332,6 @@ const AddProduct = () => {
               ))}
             </select>
           </div>
-
 
           <div className="border rounded-xl p-4">
 
@@ -381,7 +370,6 @@ const AddProduct = () => {
 
           </div>
 
-
           <div>
             <label className="block font-semibold mb-2">
               Product Images
@@ -398,7 +386,6 @@ const AddProduct = () => {
             <p className="text-sm text-gray-500 mt-2">
               Upload up to 5 images. Maximum 5 MB per image.
             </p>
-
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
 
@@ -424,7 +411,6 @@ const AddProduct = () => {
 
             </div>
           </div>
-
 
           <button
             type="submit"

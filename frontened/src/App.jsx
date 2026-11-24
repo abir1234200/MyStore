@@ -1,10 +1,15 @@
+
 import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
+
+import API_URL from "./config/api.js";
+
 import { setCart } from "./features/cart/cartSlice";
 import { setWishlist } from "./features/wishlist/wishlistSlice";
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -27,10 +32,19 @@ import AddProduct from "./pages/AddProduct";
 import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
 
+function getImageUrl(image) {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+        return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+}
+
 function App() {
     const dispatch = useDispatch();
     const location = useLocation();
-
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -47,9 +61,8 @@ function App() {
                     Authorization: `Bearer ${token}`,
                 };
 
-
                 const cartResponse = await axios.get(
-                    "http://localhost:8004/cart",
+                    `${API_URL}/cart`,
                     { headers }
                 );
 
@@ -61,16 +74,17 @@ function App() {
                                 id: item.product._id,
                                 title: item.product.name,
                                 price: item.product.price,
-                                image: item.product.images?.[0]
-                                    ? `http://localhost:8004${item.product.images[0]}`
-                                    : "",
+                                image: getImageUrl(
+                                    item.product.images?.[0]
+                                ),
                                 quantity: item.quantity,
                             }));
 
                     dispatch(setCart(cartProducts));
                 }
+
                 const wishlistResponse = await axios.get(
-                    "http://localhost:8004/wishlist",
+                    `${API_URL}/wishlist`,
                     { headers }
                 );
 
@@ -82,9 +96,9 @@ function App() {
                                 id: product._id,
                                 title: product.name,
                                 price: product.price,
-                                image: product.images?.[0]
-                                    ? `http://localhost:8004${product.images[0]}`
-                                    : "",
+                                image: getImageUrl(
+                                    product.images?.[0]
+                                ),
                                 rating: product.rating || 0,
                             }));
 
@@ -118,7 +132,6 @@ function App() {
             <Toaster position="top-right" />
 
             <Routes>
-
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/:id" element={<ProductDetails />} />

@@ -4,6 +4,8 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
+import API_URL from "../config/api.js";
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -14,7 +16,6 @@ const Signup = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
 
   const passwordChecks = [
     {
@@ -59,7 +60,6 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     if (!isPasswordValid) {
       toast.error("Please enter a strong password");
       return;
@@ -69,7 +69,7 @@ const Signup = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8004/user/register",
+        `${API_URL}/user/register`,
         formData
       );
 
@@ -169,7 +169,6 @@ const Signup = () => {
               required
             />
 
-
             <div className="mt-3 space-y-2">
 
               <p className="text-sm font-medium text-gray-600">
@@ -179,8 +178,9 @@ const Signup = () => {
               {passwordChecks.map((check, index) => (
                 <p
                   key={index}
-                  className={`text-sm flex items-center gap-2 ${check.valid ? "text-green-600" : "text-red-500"
-                    }`}
+                  className={`text-sm flex items-center gap-2 ${
+                    check.valid ? "text-green-600" : "text-red-500"
+                  }`}
                 >
                   <span>
                     {check.valid ? "✓" : "✗"}

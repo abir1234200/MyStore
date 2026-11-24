@@ -11,6 +11,8 @@ import {
     clearCart,
 } from "../features/cart/cartSlice";
 
+import API_URL from "../config/api.js";
+
 const Cart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -26,13 +28,12 @@ const Cart = () => {
         0
     );
 
-
     const updateQuantity = async (item, newQuantity) => {
         if (newQuantity < 1) return;
 
         try {
             const response = await axios.put(
-                `http://localhost:8004/cart/update/${item.id}`,
+                `${API_URL}/cart/update/${item.id}`,
                 { quantity: newQuantity },
                 {
                     headers: {
@@ -57,11 +58,10 @@ const Cart = () => {
         }
     };
 
-
     const handleRemove = async (productId) => {
         try {
             const response = await axios.delete(
-                `http://localhost:8004/cart/remove/${productId}`,
+                `${API_URL}/cart/remove/${productId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -82,11 +82,10 @@ const Cart = () => {
         }
     };
 
-
     const handleClearCart = async () => {
         try {
             const response = await axios.delete(
-                "http://localhost:8004/cart/clear",
+                `${API_URL}/cart/clear`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -106,7 +105,6 @@ const Cart = () => {
             );
         }
     };
-
 
     const handleBuyNow = (item) => {
         if (!token) {
@@ -148,7 +146,6 @@ const Cart = () => {
                             className="border p-4 rounded-lg mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                         >
 
-
                             <div className="flex items-center gap-4">
 
                                 <img
@@ -173,7 +170,6 @@ const Cart = () => {
                                 </div>
 
                             </div>
-
 
                             <div className="flex items-center gap-3">
 
@@ -208,7 +204,6 @@ const Cart = () => {
 
                             </div>
 
-
                             <div className="flex flex-wrap gap-2">
 
                                 <button
@@ -231,7 +226,6 @@ const Cart = () => {
 
                         </div>
                     ))}
-
 
                     <div className="mt-8 border-t pt-6">
 

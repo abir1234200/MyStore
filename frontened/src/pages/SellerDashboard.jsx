@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import API_URL from "../config/api.js";
 
 const SellerDashboard = () => {
   const navigate = useNavigate();
@@ -15,8 +16,6 @@ const SellerDashboard = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [upiId, setUpiId] = useState("");
-
-
 
   const becomeSeller = async (e) => {
     e.preventDefault();
@@ -40,7 +39,7 @@ const SellerDashboard = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8004/user/become-seller",
+        `${API_URL}/user/become-seller`,
         { upiId: cleanUpiId },
         {
           headers: {
@@ -71,9 +70,6 @@ const SellerDashboard = () => {
     }
   };
 
-
-
-
   return (
     <div className="min-h-screen bg-gray-100 p-6 md:p-10">
 
@@ -86,8 +82,6 @@ const SellerDashboard = () => {
       </p>
 
       {!isSeller ? (
-
-
 
         <div className="max-w-lg rounded-xl bg-white p-6 shadow-md">
 
@@ -174,8 +168,6 @@ const SellerDashboard = () => {
         </div>
 
       ) : (
-
-
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 

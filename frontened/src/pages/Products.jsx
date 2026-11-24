@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../components/ProductCard.jsx";
+import API_URL from "../config/api.js";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -11,7 +12,6 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -25,11 +25,20 @@ const Products = () => {
 
   const productsPerPage = 8;
 
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${API_URL}${image.startsWith("/") ? "" : "/"}${image}`;
+  };
 
   const getAllCategories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8004/category"
+        `${API_URL}/category`
       );
 
       setCategories(response.data.categories || []);
@@ -42,14 +51,13 @@ const Products = () => {
     }
   };
 
-
   const getAllProducts = async () => {
     try {
       setLoading(true);
       setError("");
 
       const response = await axios.get(
-        "http://localhost:8004/product",
+        `${API_URL}/product`,
         {
           params: {
             page: currentPage,
@@ -77,9 +85,9 @@ const Products = () => {
 
           title: product.name,
 
-          image: product.images?.[0]
-            ? `http://localhost:8004${product.images[0]}`
-            : "",
+          image: getImageUrl(product.images?.[0]),
+
+          images: product.images || [],
 
           price: product.price,
           rating: product.rating || 0,
@@ -93,7 +101,7 @@ const Products = () => {
       setTotalPages(response.data.totalPages || 0);
 
     } catch (error) {
-      console.log("Product error:", error);
+      console.log("Product error:", error.response?.data || error.message);
       setError("Failed to load products. Please try again.");
 
     } finally {
@@ -101,11 +109,9 @@ const Products = () => {
     }
   };
 
-
   useEffect(() => {
     getAllCategories();
   }, []);
-
 
   useEffect(() => {
     if (!categoriesLoaded) return;
@@ -144,7 +150,6 @@ const Products = () => {
       <h1 className="text-3xl font-bold mb-6">
         Our Products
       </h1>
-
 
       <div className="flex flex-col md:flex-row gap-4 mb-8">
 
@@ -209,7 +214,6 @@ const Products = () => {
 
       </div>
 
-
       {loading ? (
         <p className="text-lg">
           Loading products...
@@ -238,7 +242,6 @@ const Products = () => {
             </div>
           )}
 
-
           {totalPages > 1 && (
             <div className="flex justify-center items-center flex-wrap gap-3 mt-10">
 
@@ -260,10 +263,11 @@ const Products = () => {
                     onClick={() =>
                       setCurrentPage(index + 1)
                     }
-                    className={`px-4 py-2 rounded ${currentPage === index + 1
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200"
-                      }`}
+                    className={`px-4 py-2 rounded ${
+                      currentPage === index + 1
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200"
+                    }`}
                   >
                     {index + 1}
                   </button>
